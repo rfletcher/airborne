@@ -1,3 +1,4 @@
+require 'airborne/jsonp_parser'
 require 'airborne/optional_hash_type_expectations'
 require 'airborne/path_matcher'
 require 'airborne/request_expectations'

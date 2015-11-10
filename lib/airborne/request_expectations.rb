@@ -8,12 +8,6 @@ module Airborne
     include RSpec
     include PathMatcher
 
-    def expect_json_types(*args)
-      call_with_path(args) do |param, body|
-        expect_json_types_impl(param, body)
-      end
-    end
-
     def expect_json(*args)
       call_with_path(args) do |param, body|
         expect_json_impl(param, body)
@@ -30,6 +24,40 @@ module Airborne
       args.push(convert_expectations_for_json_sizes(args.pop))
 
       expect_json_types(*args)
+    end
+
+    def expect_json_types(*args)
+      call_with_path(args) do |param, body|
+        expect_json_types_impl(param, body)
+      end
+    end
+
+    def expect_jsonp(method=nil)
+      expect_header_matches(:content_type, %r{^text/javascript($|;)})
+
+      if method.nil?
+        expect(jsonp_body[:method]).to be_a(Hash)
+      else
+        expect(jsonp_body[:method]).to be(method) unless method.nil?
+      end
+    end
+
+    def expect_jsonp_argument(*args)
+      call_with_path(args, jsonp_body[:arguments]) do |param, body|
+        expect_json_impl(param, body)
+      end
+    end
+
+    def expect_jsonp_argument_types(*args)
+      call_with_path(args, jsonp_body[:arguments]) do |param, body|
+        expect_json_types_impl(param, body)
+      end
+    end
+
+    def expect_jsonp_types(*args)
+      args.each_with_index do |arg, i|
+        expect_json_types_impl(arg, jsonp_body[:arguments][i])
+      end
     end
 
     def expect_status(code)
@@ -89,13 +117,13 @@ module Airborne
       end
     end
 
-    def call_with_path(args)
+    def call_with_path(args, subject=json_body)
       if args.length == 2
-        get_by_path(args[0], json_body) do|json_chunk|
+        get_by_path(args[0], subject) do|json_chunk|
           yield(args[1], json_chunk)
         end
       else
-        yield(args[0], json_body)
+        yield(args[0], subject)
       end
     end
 

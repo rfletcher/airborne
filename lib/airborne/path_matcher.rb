@@ -3,6 +3,7 @@ module Airborne
 
   module PathMatcher
     def get_by_path(path, json, &block)
+      path = path.to_s
       fail PathError, "Invalid Path, contains '..'" if /\.\./ =~ path
       type = false
       parts = path.split('.')

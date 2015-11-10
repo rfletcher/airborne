@@ -6,6 +6,7 @@ module Airborne
   class InvalidJsonError < StandardError; end
 
   include RequestExpectations
+  include JsonpParser
 
   attr_reader :response, :headers, :body
 

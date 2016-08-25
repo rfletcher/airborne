@@ -12,13 +12,13 @@ RSpec driven API testing framework
 ## Installation
 
 Install Airborne:
-
-    gem install airborne
-
+```shell
+$ gem install airborne
+```
 Or add it to your Gemfile:
-
-    gem 'airborne'
-
+```ruby
+gem 'airborne'
+```
 ##Creating Tests
 
 ```ruby
@@ -141,7 +141,7 @@ post 'http://example.com/api/v1/my_api', { :name => 'John Doe' }, { 'x-auth-toke
 For requests that require Query params you can pass a params hash into headers.
 
 ```ruby
-post 'http://example.com/api/v1/my_api', { }, { 'params' => {'param_key' => 'param_value' }
+post 'http://example.com/api/v1/my_api', { }, { 'params' => {'param_key' => 'param_value' } }
 ```
 
 ##Testing Rack Applications
@@ -357,10 +357,50 @@ describe 'spec' do
 end
 ```
 
+You can also control the strictness of `expect_json` and `expect_json_types` with the global settings `match_expected_default` and `match_actual_default` like this.
+
+```ruby
+Airborne.configure do |config|
+  config.match_expected_default = true
+  config.match_actual_default = false
+end
+```
+
+`match_expected_default` requires all the keys in the expected JSON are present in the response.
+`match_actual_default` requires that the keys in the response are tested in the expected Hash.
+
+So you can do the following combinations:
+
+`match_expected_default=false`, `match_actual_default=false` - check only intersection
+`match_expected_default=false`, `match_actual_default=true` - raise on extra key in response
+`match_expected_default=true`, `match_actual_default=false` - raise on missing key in response
+`match_expected_default=true`, `match_actual_default=true` - expect exact match
+
+
+Airborne sets `match_expected_default` to `true` and `match_actual_default` to `false` by default.
+
+You can use the `match_expected` and `match_actual` settings to override your global defaults in test blocks like this.
+
+```ruby
+describe 'test something', match_expected: true, match_actual: false do
+end
+```
+
+OR
+
+```ruby
+describe 'test something' do
+  Airborne.configuration.match_expected = true
+  Airborne.configuration.match_actual = false
+end
+```
+
 ## Run it from the CLI
 
-    $ cd your/project
-    $ rspec spec
+```shell
+$ cd your/project
+$ rspec spec
+```
 ## Authors
 * [Seth Pollack](https://github.com/sethpollack)
 * [Alex Friedman](https://github.com/brooklynDev)

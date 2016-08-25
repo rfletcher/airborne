@@ -37,5 +37,11 @@ module Airborne
         e.response
       end
     end
+
+    private
+
+    def base_headers
+      { content_type: :json }.merge(Airborne.configuration.headers || {})
+    end
   end
 end

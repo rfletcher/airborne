@@ -15,6 +15,7 @@ RSpec.configure do |config|
   config.add_setting :match_actual_default, default: false
   config.add_setting :headers
   config.add_setting :opts
+  config.add_setting :params
   config.add_setting :rack_app
   config.add_setting :requester_type
   config.add_setting :requester_module

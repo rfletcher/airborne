@@ -5,12 +5,13 @@ module Airborne
     def make_request( method, url, opts = {} )
       default_opts    = Airborne.configuration.opts || {}
       default_headers = Airborne.configuration.headers || {}
+      default_params  = Airborne.configuration.params || {}
 
       opts    = default_opts.merge( opts )
 
       body    = opts.delete( :body )
       headers = default_headers.merge( opts.delete( :headers ) || {} )
-      params  = opts.delete( :params ) || {}
+      params  = default_params.merge( opts.delete( :params ) || {} )
 
       # pass params as the body, or as a query string?
       if [:post, :patch, :put, :delete].include?( method )
